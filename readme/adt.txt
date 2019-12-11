@@ -1,0 +1,18 @@
+kijk naar  algorithm/none, daar staat een heel simpel voorbeeld van wat je moet doen.
+
+de input std::vector<uint8_t> zijn de pure bytes van het bestand.
+
+als output wil ik een vector<Variable> van overblijvende string
+ook een vector van producties waarvan de head gesorteerd is.
+(aka producties: 0 -> aa, 1-> ab, 2 -> ac, 3-> cc)
+
+de settings zijn eigenlijk gewoon flags, standaard staat de flag 'reserve' aan.
+Dit geeft aan mijn geweldige algoritmes aan dat elke transitie dat naar 2 bytes gaat aka (x -> 'ab') niet wordt opgeslaan
+
+door deze optimalisatie moeten er wel wat dingen gedaan worden waarbij de settings klasse helpt
+
+- nieuwe variabelen in de string beginnen vanaf : settings.begin()
+- check met 'is_reserved_rule' of een productie met 2 variabelen is gehardcodet
+- indien dit zo is, gebruik 'convert_to_reserved' voor de waarde te bepalen
+
+er zijn ook andere functies zoals 'offset', deze doet gewoon start() + index, voor als je bv je eigen counter wil bijhouden

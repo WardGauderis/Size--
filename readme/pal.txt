@@ -1,0 +1,8 @@
+string_size: 32 bits
+production_size: 32 bits
+flags: 8 bits
+unique code: 8 bits -> 93
+
+huffman_tree: undefined
+productions: undefined
+string_data: undefined
