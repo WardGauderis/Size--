@@ -17,10 +17,12 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 			                                 "0 none\n"
 			                                 "1 bisection\n"
 			                                 "2 bisection++\n"
-			                                 "3 repair *\n"
-			                                 "4 sequitur\n"
-			                                 "5 sequential\n"
-			                                 "6 LZW")
+			                                 "3 LCA\n"
+			                                 "4 OLCA\n"
+			                                 "5 repair *\n"
+			                                 "6 sequitur\n"
+			                                 "7 sequential\n"
+			                                 "8 LZW")
 			("mode,m", value<Mode>()->default_value(Mode::none_specified),
 			 "run the algorithm in a certain mode (index or name; optional; only applies to algorithms with a *):\n"
 			 "0 none\n"

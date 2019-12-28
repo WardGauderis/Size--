@@ -16,13 +16,17 @@ std::istream& operator>>(std::istream& in, Algorithm& algorithm) {
 		algorithm = Algorithm::bisection;
 	else if (token == "2" || token == "bisection++" || token == "bisectionplusplus")
 		algorithm = Algorithm::bisectionPlusPlus;
-	else if (token == "3" || token == "repair" || token == "re-pair")
+	else if (token == "3" || token == "lca")
+		algorithm = Algorithm::lca;
+	else if (token == "4" || token == "olca")
+		algorithm = Algorithm::olca;
+	else if (token == "5" || token == "repair" || token == "re-pair")
 		algorithm = Algorithm::repair;
-	else if (token == "4" || token == "sequitur")
+	else if (token == "6" || token == "sequitur")
 		algorithm = Algorithm::sequitur;
-	else if (token == "5" || token == "sequential")
+	else if (token == "7" || token == "sequential")
 		algorithm = Algorithm::sequential;
-	else if (token == "6" || token == "lzw")
+	else if (token == "8" || token == "lzw")
 		algorithm = Algorithm::lzw;
 	else
 		in.setstate(std::ios_base::failbit);

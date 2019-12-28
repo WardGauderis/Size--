@@ -11,15 +11,15 @@
 
 #include "pal.h"
 
-#include "algorithms/none.h"
-#include "algorithms/sequitur.h"
-
 #include "pal/decoder.h"
 #include "pal/encoder.h"
 #include "algorithms/bisection.h"
 #include "algorithms/repair.h"
 #include "algorithms/lzw.h"
-
+#include "algorithms/lca.h"
+#include "algorithms/none.h"
+#include "algorithms/sequitur.h"
+#include "algorithms/olca.h"
 
 namespace pal
 {
@@ -47,6 +47,15 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
         {
 	        auto [variables, odd] = readPairs(input);
 	        return algorithm::bisectionPlusPlus::compress(std::move(variables), odd);
+        }
+        else if(type == Algorithm::lca)
+        {
+	        auto [variables, odd] = readPairs(input);
+//	        return algorithm::lca::compress(std::move(variables), odd);
+        }
+        else if(type == Algorithm::olca)
+        {
+	        return algorithm::olca::compress(input);
         }
 //        else if(type == Algorithm::lzw)
 //        {

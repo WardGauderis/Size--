@@ -15,10 +15,12 @@ enum class Algorithm {
 	none,
 	bisection,
 	bisectionPlusPlus,
+	lca,
+	olca,
 	repair,
 	sequitur,
 	sequential,
-	lzw,
+	lzw
 };
 
 enum class Mode

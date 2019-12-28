@@ -61,10 +61,10 @@ namespace algorithm::bisection {
 				                              settings.offset(offset));
 				if (pair.second) {
 					++offset;
-					productions.emplace_back((*pair.first).first);
+					productions.emplace_back(pair.first->first);
 				}
 
-				variables[i] = (*pair.first).second;
+				variables[i] = pair.first->second;
 			}
 			if (uneven) variables[(size / 2)] = variables[size - 1];
 
@@ -135,7 +135,7 @@ namespace algorithm::bisectionPlusPlus {
 					productions.emplace_back((*pair.first).first);
 				}
 
-				variables[index++] = (*pair.first).second;
+				variables[index++] = pair.first->second;
 			}
 			if (size % 2 == 1) variables[index++] = variables[size - 1];
 
