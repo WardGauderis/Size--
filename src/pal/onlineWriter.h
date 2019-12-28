@@ -1,7 +1,7 @@
 //============================================================================
-// @name        : onlineEncoder.h
+// @name        : onlineWriter.h
 // @author      : Thomas Dooms
-// @date        : 11/26/19
+// @date        : 12/28/19
 // @version     : 
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
 // @description : 
@@ -10,30 +10,16 @@
 
 #pragma once
 
-#include <filesystem>
-#include <fstream>
+#include "../util/settings.h"
+#include "../bitio/bitwriter.h"
 #include "metadata.h"
 
-#include "../bitio/bitwriter.h"
-#include "../bitio/bitreader.h"
-
-#include "encoder.h"
-
-namespace pal
+class OnlineWriter
 {
-class OnlineHelper
-{
-    friend class Bitreader;
-    friend class Bitwriter;
-
-    OnlineHelper(const std::filesystem::path& input, const std::filesystem::path& output) : reader(input), writer(output)
+public:
+    explicit OnlineWriter(const std::filesystem::path& path) : writer(path)
     {
-        writeMetadata(Metadata(0,0,Settings(0)));
-    }
-
-    uint8_t readByte()
-    {
-        return reader.read_value<uint8_t>();
+        writeMetadata(pal::Metadata(0,0,Settings(0)));
     }
 
     template<typename Type>
@@ -42,7 +28,7 @@ class OnlineHelper
         writer.write_value(value, size);
     }
 
-    void writeMetadata(Metadata metadata)
+    void writeMetadata(pal::Metadata metadata)
     {
         uint8_t unique = 93;
 
@@ -54,13 +40,6 @@ class OnlineHelper
         file.write(reinterpret_cast<char*>(&unique), sizeof(uint8_t));
         file.seekp(std::ios_base::end);
     }
-
-    Bitreader reader;
+private:
     Bitwriter writer;
 };
-
-}
-
-
-
-
