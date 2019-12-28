@@ -32,7 +32,6 @@ std::tuple<Metadata, std::vector<Production>, std::vector<Variable>> Decoder::de
 
         return std::make_tuple(metadata, std::move(productions), std::move(string));
     }
-
 }
 
 Metadata Decoder::decodeMetadata(Bitreader& reader)
