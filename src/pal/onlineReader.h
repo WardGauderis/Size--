@@ -31,9 +31,10 @@ public:
 
     size_t getSize()
     {
+        if(stream.tellg() != 0) throw std::runtime_error("getSize must be called before reading");
         stream.seekg(0, std::ios::end);
         const auto size = stream.tellg();
-        stream.seekg(0, std::ios::cur);
+        stream.seekg(0, std::ios::beg);
 
         return size;
     }
