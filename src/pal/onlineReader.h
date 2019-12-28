@@ -29,6 +29,15 @@ public:
         return res;
     }
 
+    size_t getSize()
+    {
+        stream.seekg(0, std::ios::end);
+        const auto size = stream.tellg();
+        stream.seekg(0, std::ios::cur);
+
+        return size;
+    }
+
 private:
     std::ifstream stream;
 };
