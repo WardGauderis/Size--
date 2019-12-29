@@ -18,7 +18,6 @@ private:
 	boost::program_options::options_description desc;
 	std::vector<std::filesystem::path> files;
 	bool tar = false;
-	bool verbose;
 	int returnValue = 0;
 
 	void checkOptions();

@@ -19,7 +19,7 @@ namespace algorithm::olca {
 	public:
 		OLCA(OnlineReader& reader);
 
-		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(OnlineReader& reader);
+		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(OnlineReader& reader, bool verbose);
 
 	private:
 		robin_hood::unordered_flat_map<Production, Variable> revDict;
@@ -36,7 +36,7 @@ namespace algorithm::olca {
 
 		static bool isMaximal(const std::deque<Variable>& w, size_t i);
 
-		static bool replacePair(const std::deque<Variable>& w, size_t i);
+		static bool isPair(const std::deque<Variable>& w, size_t i);
 
 		Variable getVariable(Variable a, Variable b);
 
@@ -47,7 +47,7 @@ namespace algorithm::olca {
 	};
 
 	std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-	compress(OnlineReader& reader);
+	compress(OnlineReader& reader, bool verbose);
 
 }
 

@@ -11,11 +11,18 @@ algorithm::olca::OLCA::OLCA(OnlineReader& reader) {
 }
 
 std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-algorithm::olca::OLCA::run(OnlineReader& reader) {
+algorithm::olca::OLCA::run(OnlineReader& reader, bool verbose) {
 	auto size = reader.getSize();
+	if(verbose) std::cout << size << " bytes total" << std::endl;
 	for (size_t i = 0; i < size; ++i) {
 		insertVariable(0, reader.readVariable());
+		if (verbose) {
+			printf("\r");
+			printf("%ld bytes -> %zu rules", i+1, productions.size());
+			fflush(stdout);
+		}
 	}
+	if(verbose) std::cout << std::endl;
 	for (size_t i = 0; i < buffers.size(); ++i) {
 		cleanupVariable(i);
 	}
@@ -47,7 +54,7 @@ bool algorithm::olca::OLCA::isMaximal(const std::deque<Variable>& w, const size_
 	return tmp > lca(w[i - 1], w[i]) && tmp > lca(w[i + 1], w[i + 2]);
 }
 
-bool algorithm::olca::OLCA::replacePair(const std::deque<Variable>& w, const size_t i) {
+bool algorithm::olca::OLCA::isPair(const std::deque<Variable>& w, size_t i) {
 	if (isRepetitive(w, i)) return true;
 	else if (isRepetitive(w, i + 1)) return false;
 	else if (isRepetitive(w, i + 2)) return true;
@@ -64,7 +71,7 @@ void algorithm::olca::OLCA::insertVariable(size_t index, Variable x) {
 	buffers[index].push_back(x);
 	if (buffers[index].size() < 5) return;
 
-	if (!replacePair(buffers[index], 1)) {
+	if (!isPair(buffers[index], 1)) {
 		buffers[index].pop_front();
 		insertVariable(index + 1, buffers[index].front());
 	}
@@ -96,7 +103,7 @@ void algorithm::olca::OLCA::cleanupVariable(size_t index) {
 		else insertVariable(index + 1, buffers[index][1]);
 	} else if (buffers[index].size() == 3) insertVariable(index + 1, getVariable(buffers[index][1], buffers[index][2]));
 	else if (buffers[index].size() == 4) {
-		if (replacePair(buffers[index], 1)) {
+		if (isPair(buffers[index], 1)) {
 			insertVariable(index + 1, getVariable(buffers[index][1], buffers[index][2]));
 			insertVariable(index + 1, buffers[index][3]);
 		} else {
@@ -107,7 +114,7 @@ void algorithm::olca::OLCA::cleanupVariable(size_t index) {
 }
 
 std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-algorithm::olca::compress(OnlineReader& reader) {
+algorithm::olca::compress(OnlineReader& reader, bool verbose) {
 	OLCA olca(reader);
-	return olca.run(reader);
+	return olca.run(reader, verbose);
 }
