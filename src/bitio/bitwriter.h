@@ -80,13 +80,17 @@ public:
 
     void write_buffer() noexcept
     {
-//        std::cout << std::bitset<64>(buffer) << '\n';
         file.write(reinterpret_cast<char*>(&buffer), sizeof(buffer));
     }
 
     auto& get_file()
     {
         return file;
+    }
+
+    size_t getCurrentPos()
+    {
+        return file.tellp();
     }
 
 private:

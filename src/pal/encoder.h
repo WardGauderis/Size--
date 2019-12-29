@@ -20,7 +20,7 @@ namespace pal
 {
     struct Encoder
     {
-        static void encode(const std::filesystem::path& path, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata);
+        static void encode(const std::filesystem::path& path, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata, bool verbose);
 
         static void encodeMetadata   (Bitwriter& writer, Metadata metadata);
         static void encodeHuffmanTree(Bitwriter& writer, const huffman::Encoder& encoder, Metadata metadata);

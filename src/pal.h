@@ -20,7 +20,7 @@
 
 namespace pal
 {
-    void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar = false);
+    void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose);
     bool decode(const std::filesystem::path& input, const std::filesystem::path& output);
 
     std::vector<uint8_t> readBytes(const std::filesystem::path& path);
