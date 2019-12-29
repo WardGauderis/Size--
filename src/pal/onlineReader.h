@@ -22,9 +22,9 @@ public:
         stream = std::ifstream(path);
     }
 
-    Variable readByte()
+    Variable readVariable()
     {
-        Variable res;
+        Variable res = 0;
         stream.read(reinterpret_cast<char*>(&res), sizeof(uint8_t));
         return res;
     }

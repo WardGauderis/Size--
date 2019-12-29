@@ -11,21 +11,22 @@
 #include "../util/production.h"
 #include "../util/robin_hood.h"
 #include "../util/settings.h"
-#include "../pal/onlineHelper.h"
+#include "../pal/onlineReader.h"
 
 namespace algorithm::olca {
 
 	class OLCA {
 	public:
-		OLCA();
+		OLCA(OnlineReader& reader);
 
-		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(pal::OnlineHelper helper);
+		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(OnlineReader& reader);
 
 	private:
 		robin_hood::unordered_flat_map<Production, Variable> revDict;
 		std::vector<Production> productions;
 		std::vector<std::deque<Variable>> buffers;
 		Settings settings;
+		Variable start = UINT32_MAX;
 
 		static bool isRepetitive(const std::deque<Variable>& w, size_t i);
 
@@ -41,10 +42,12 @@ namespace algorithm::olca {
 
 		void insertVariable(size_t index, Variable x);
 
+		void cleanupVariable(size_t index);
+
 	};
 
 	std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-	compress(const std::filesystem::path &input);
+	compress(OnlineReader& reader);
 
 }
 
