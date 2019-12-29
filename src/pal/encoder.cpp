@@ -21,11 +21,12 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
 
     if(metadata.settings.is_nohuffman())
     {
+        if(verbose) std::cout << "encoding without huffman: (file sizes will not be given)\n";
         encodeWithoutHuffman(writer, productions, string, metadata);
     }
     else
     {
-        if(verbose) std::cout << "encoding without huffman:\n";
+        if(verbose) std::cout << "encoding with huffman:\n";
         encodeHuffmanTree(writer, encoder, metadata);
         if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
         encodeProductions(writer, encoder, productions);
