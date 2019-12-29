@@ -24,7 +24,7 @@
 namespace pal
 {
 
-void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar)
+void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose)
 {
     auto [settings, string, productions] = [&]()
     {
@@ -67,7 +67,7 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
     if(tar) settings.flags |= Settings::Flags::tar;
 
     Metadata metadata(string.size(), productions.size(), settings);
-    pal::Encoder::encode(output, string, productions, metadata);
+    pal::Encoder::encode(output, string, productions, metadata, verbose);
 }
 
 bool decode(const std::filesystem::path& input, const std::filesystem::path& output)

@@ -96,47 +96,4 @@ EncodingTable createEncodingTable(const std::unique_ptr<Node>& root, pal::Metada
     return result;
 }
 
-void printEncodingTable(const EncodingTable& table)
-{
-    for(size_t i = 0; i < table.size(); i++)
-    {
-        if(table[i].second == 0) continue;
-
-        // using a bitset to convert numbers to bit strings
-        std::bitset<sizeof(uint32_t) * 8> set(table[i].first);
-        const auto str = set.to_string();
-
-        std::cout << char(i) << ": " << str.substr(str.size() - table[i].second) << '\n';
-    }
-}
-
-void dotHuffmanTree(const std::string& path, const std::unique_ptr<Node>& root)
-{
-    const auto dot = path + ".dot";
-    const auto png = path + ".png";
-
-    std::ofstream file(dot);
-    file << "digraph G{";
-
-    uint32_t j = 10000000;
-    const auto swap = [&](auto i){ if(i == std::numeric_limits<uint32_t>::max()){ return j++; } else return i; };
-
-    std::function<void(const std::unique_ptr<Node>&, uint32_t, uint8_t)> recursion = [&](const auto& root, auto num, auto depth) -> void
-    {
-        if(root == nullptr) return;
-        const auto c = swap(root->character);
-        file << num << " -> " << c << '\n';
-
-        if (root->left  != nullptr) recursion(root->left , c, depth + 1);
-        if (root->right != nullptr) recursion(root->right, c, depth + 1);
-    };
-
-    recursion(root, -1, 0);
-
-    file << "}";
-
-
-    system(("dot -Tpng " + dot + " -o " + png + "&").c_str());
-}
-
 }

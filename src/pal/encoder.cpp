@@ -12,7 +12,7 @@
 namespace pal
 {
 
-void Encoder::encode(const std::filesystem::path& path, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata)
+void Encoder::encode(const std::filesystem::path& path, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata, bool verbose)
 {
     huffman::Encoder encoder(string, productions, metadata);
     Bitwriter writer(path);
@@ -25,9 +25,13 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
     }
     else
     {
+        if(verbose) std::cout << "encoding without huffman:\n";
         encodeHuffmanTree(writer, encoder, metadata);
+        if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
         encodeProductions(writer, encoder, productions);
+        if(verbose) std::cout << "  - after productions, the file is approx : " << writer.getCurrentPos() << " bytes\n";
         encodeString     (writer, encoder, string);
+        if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
     }
 }
 
