@@ -11,18 +11,11 @@ algorithm::olca::OLCA::OLCA(OnlineReader& reader) {
 }
 
 std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-algorithm::olca::OLCA::run(OnlineReader& reader, bool verbose) {
+algorithm::olca::OLCA::run(OnlineReader& reader) {
 	auto size = reader.getSize();
-	if(verbose) std::cout << size << " bytes total" << std::endl;
 	for (size_t i = 0; i < size; ++i) {
 		insertVariable(0, reader.readVariable());
-		if (verbose) {
-			printf("\r");
-			printf("%ld bytes -> %zu rules", i+1, productions.size());
-			fflush(stdout);
-		}
 	}
-	if(verbose) std::cout << std::endl;
 	for (size_t i = 0; i < buffers.size(); ++i) {
 		cleanupVariable(i);
 	}
@@ -114,7 +107,7 @@ void algorithm::olca::OLCA::cleanupVariable(size_t index) {
 }
 
 std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-algorithm::olca::compress(OnlineReader& reader, bool verbose) {
+algorithm::olca::compress(OnlineReader& reader) {
 	OLCA olca(reader);
-	return olca.run(reader, verbose);
+	return olca.run(reader);
 }

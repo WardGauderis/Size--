@@ -19,7 +19,7 @@ namespace algorithm::olca {
 	public:
 		OLCA(OnlineReader& reader);
 
-		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(OnlineReader& reader, bool verbose);
+		std::tuple<Settings, std::vector<Variable>, std::vector<Production>> run(OnlineReader& reader);
 
 	private:
 		robin_hood::unordered_flat_map<Production, Variable> revDict;
@@ -47,7 +47,7 @@ namespace algorithm::olca {
 	};
 
 	std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
-	compress(OnlineReader& reader, bool verbose);
+	compress(OnlineReader& reader);
 
 }
 
