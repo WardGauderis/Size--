@@ -12,6 +12,7 @@
 
 #include "huffman.h"
 #include "../pal/metadata.h"
+#include "../visualize/visualize.h"
 
 namespace huffman
 {
@@ -23,8 +24,6 @@ struct Encoder
         const auto freq = countFrequencies(string, productions, metadata);
         root  = createHuffmanTree(freq);
         table = createEncodingTable(root, metadata);
-
-//        dotHuffmanTree("visuals/encode", root);
     }
 
     void encodeVariable(Bitwriter& writer, Variable var) const

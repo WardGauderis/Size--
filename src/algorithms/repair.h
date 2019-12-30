@@ -271,10 +271,11 @@ namespace algorithm::repair
                 if(double(unused_count) / double(map.size()) < 1 - clear_factor) return;
                 unused_count = 0;
 
-                for(auto iter = map.begin(); iter != map.end(); ++iter)
+                auto iter = map.begin();
+                while(iter != map.end())
                 {
                     if(iter->second.second < min_occurrences) iter = map.erase(iter);
-                    if(iter == map.end()) break;
+                    else ++iter;
                 }
                 queue.clear_unused(min_occurrences);
             }

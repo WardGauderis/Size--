@@ -27,17 +27,17 @@ struct Settings
 
     explicit Settings(uint8_t flags = Flags::reserved) : flags(flags) {}
 
-    [[nodiscard]] static uint32_t convert_to_reserved(uint32_t first, uint32_t second)
+    [[nodiscard]] static uint32_t convert_to_reserved(uint32_t first, uint32_t second) noexcept
     {
         return byte_end + (second << 8u) + first;
     }
-    [[nodiscard]] static std::array<uint32_t, 2> convert_from_reserved(uint32_t index)
+    [[nodiscard]] static std::array<uint32_t, 2> convert_from_reserved(uint32_t index) noexcept
     {
         const auto temp = index - byte_end;
         return {temp & 0x000000FFu, temp >> 8u};
     }
 
-    [[nodiscard]] bool static is_reserved_rule(uint32_t first, uint32_t second)
+    [[nodiscard]] bool static is_reserved_rule(uint32_t first, uint32_t second) noexcept
     {
         return first < byte_end and second < byte_end;
     }
@@ -59,11 +59,11 @@ struct Settings
     {
         return index < byte_end;
     }
-    [[nodiscard]] bool is_reserved_variable(uint32_t index)
+    [[nodiscard]] bool is_reserved_variable(uint32_t index) const noexcept
     {
         return has_reserved() and index >= byte_end and index < reserved_end;
     }
-    [[nodiscard]] bool is_valid(uint32_t index)
+    [[nodiscard]] bool is_valid(uint32_t index) const noexcept
     {
         return index >= begin() and index < end();
     }

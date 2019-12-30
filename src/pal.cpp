@@ -48,11 +48,11 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
 	        auto [variables, odd] = readPairs(input);
 	        return algorithm::bisectionPlusPlus::compress(std::move(variables), odd);
         }
-        else if(type == Algorithm::lca)
-        {
-	        auto [variables, odd] = readPairs(input);
+//        else if(type == Algorithm::lca)
+//        {
+//	        auto [variables, odd] = readPairs(input);
 //	        return algorithm::lca::compress(std::move(variables), odd);
-        }
+//        }
         else if(type == Algorithm::olca)
         {
         	OnlineReader reader(input);
@@ -77,7 +77,7 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
     if(tar) settings.flags |= Settings::Flags::tar;
 
     Metadata metadata(string.size(), productions.size(), settings);
-    pal::Encoder::encode(output, string, productions, metadata, verbose);
+    pal::Encoder::encode(output, string, productions, metadata, verbose, true);
 }
 
 bool decode(const std::filesystem::path& input, const std::filesystem::path& output)

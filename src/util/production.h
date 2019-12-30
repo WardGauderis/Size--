@@ -11,8 +11,9 @@
 #pragma once
 
 #include <array>
+#include "variable.h"
 
-using Production = std::array<uint32_t, 2>;
+using Production = std::array<Variable, 2>;
 
 template<>
 struct std::hash<Production>
