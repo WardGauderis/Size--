@@ -125,7 +125,7 @@ void Controller::compress() {
 	}
 
 
-	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"));
+	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"), false);
 }
 
 void Controller::extract() {

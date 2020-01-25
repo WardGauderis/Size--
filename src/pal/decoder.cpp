@@ -17,21 +17,13 @@ std::tuple<Metadata, std::vector<Production>, std::vector<Variable>> Decoder::de
     Bitreader reader(path);
 
     const auto metadata = decodeMetadata(reader);
-    if(metadata.settings.is_nohuffman())
-    {
-        auto [productions, string] = decodeWithoutHuffman(reader, metadata);
-        return std::make_tuple(metadata, std::move(productions), std::move(string));
-    }
-    else
-    {
-        auto root = decodeHuffmanTree(reader, metadata);
-        huffman::Decoder decoder(std::move(root));
+    auto root = decodeHuffmanTree(reader, metadata);
+    huffman::Decoder decoder(std::move(root));
 
-        auto productions = decodeProductions(reader, decoder, metadata);
-        auto string = decodeString(reader, decoder, metadata);
+    auto productions = decodeProductions(reader, decoder, metadata);
+    auto string = decodeString(reader, decoder, metadata);
 
-        return std::make_tuple(metadata, std::move(productions), std::move(string));
-    }
+    return std::make_tuple(metadata, std::move(productions), std::move(string));
 }
 
 Metadata Decoder::decodeMetadata(Bitreader& reader)
@@ -81,26 +73,6 @@ std::vector<Variable> Decoder::decodeString(Bitreader& reader, huffman::Decoder&
         result[i] = decoder.decodeVariable(reader);
     }
     return result;
-}
-
-std::pair<std::vector<Production>, std::vector<Variable>> Decoder::decodeWithoutHuffman(Bitreader& reader, Metadata metadata)
-{
-    std::vector<Production> productions(metadata.productionSize);
-    std::vector<Variable> string(metadata.stringSize);
-
-    const auto size = metadata.charLength;
-
-    for(auto& production : productions)
-    {
-        production[0] = reader.read_value(size);
-        production[1] = reader.read_value(size);
-    }
-    for(auto& variable : string)
-    {
-        variable = reader.read_value(size);
-    }
-
-    return std::make_pair(std::move(productions), std::move(string));
 }
 
 }

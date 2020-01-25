@@ -8,7 +8,6 @@
 //============================================================================
 
 #include "encoder.h"
-#include "../visualize/visualize.h"
 
 namespace pal
 {
@@ -18,29 +17,19 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
     Bitwriter writer(path);
     encodeMetadata(writer, metadata);
 
-    if(metadata.settings.is_nohuffman())
-    {
-        if(verbose) std::cout << "encoding without huffman: (file sizes will not be given)\n";
-        encodeWithoutHuffman(writer, productions, string, metadata);
-    }
-    else
-    {
-        huffman::Encoder encoder(string, productions, metadata);
+    huffman::Encoder encoder(string, productions, metadata);
 
-        if(verbose) std::cout << "encoding with huffman:\n";
+    encodeHuffmanTree(writer, encoder, metadata);
+    if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
 
-        encodeHuffmanTree(writer, encoder, metadata);
-        if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
+    encodeProductions(writer, encoder, productions);
+    if(verbose) std::cout << "  - after productions, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-        encodeProductions(writer, encoder, productions);
-        if(verbose) std::cout << "  - after productions, the file is approx : " << writer.getCurrentPos() << " bytes\n";
+    encodeString(writer, encoder, string);
+    if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-        encodeString     (writer, encoder, string);
-        if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
-
-        if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
-        if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
-    }
+    if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
+    if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
 }
 
 void Encoder::encodeMetadata(Bitwriter& writer, Metadata metadata)
@@ -85,21 +74,6 @@ void Encoder::encodeString(Bitwriter& writer, const huffman::Encoder& encoder, c
     for(const auto variable : string)
     {
         encoder.encodeVariable(writer, variable);
-    }
-}
-
-void Encoder::encodeWithoutHuffman(Bitwriter& writer, const std::vector<Production>& productions, const std::vector<Variable>& string, Metadata metadata)
-{
-    const auto size = metadata.charLength;
-
-    for(const auto production : productions)
-    {
-        writer.write_value(production[0], size);
-        writer.write_value(production[1], size);
-    }
-    for(const auto variable : string)
-    {
-        writer.write_value(variable, size);
     }
 }
 

@@ -21,8 +21,8 @@ struct Settings
     {
         no_flags = 0u,
         reserved = 1u,
-        no_huffman = 2u,
-        tar = 4u,
+        tar = 2u,
+        lca_encoding = 4u,
     };
 
     explicit Settings(uint8_t flags = Flags::reserved) : flags(flags) {}
@@ -75,9 +75,9 @@ struct Settings
     {
         return flags & tar;
     }
-    [[nodiscard]] bool is_nohuffman() const noexcept
+    [[nodiscard]] bool is_lca_encoded() const noexcept
     {
-        return flags & no_huffman;
+        return flags & lca_encoding;
     }
 
     uint8_t flags;
