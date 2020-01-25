@@ -77,19 +77,20 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     buffers[0] = std::vector<Variable>(string.begin(), string.begin() + size);
     buffers[1] = std::vector<Variable>();
 
-    for(size_t level = 0; level < 4; level++)
+    constexpr size_t max_levels = 6;
+    for(size_t level = 0; level <= max_levels; level++)
     {
         file << "level" << level << " [fixedsize=true, width=25, height=0.5, label = \"";
 
         const auto curr = level % 2;
         for(size_t i = 0; i < buffers[curr].size(); i++)
         {
-            if(not std::isalnum(buffers[curr][i])) file << "<f" << i << ">" << buffers[curr][i];
-            else file << "<f" << i << ">" << static_cast<char>(buffers[curr][i]);
-
+            file << "<f" << i << ">" << buffers[curr][i];
             if(i != buffers[curr].size() - 1) file << "|";
         }
         file << "\"];\n";
+
+        if(level == max_levels) break;
 
         // swap buffers and write file
         buffers[not curr].clear();
@@ -132,7 +133,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     file << std::flush;
 
     system(("dot -Tpng " + dot.string() + " -o " + png.string()).c_str());
-//    std::filesystem::remove(dot);
+    std::filesystem::remove(dot);
 }
 
 }
