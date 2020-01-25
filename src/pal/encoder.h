@@ -28,6 +28,8 @@ namespace pal
         static void encodeProductions(Bitwriter& writer, const huffman::Encoder& encoder, const std::vector<Production>& productions);
 
         static void encodeString     (Bitwriter& writer, const huffman::Encoder& encoder, const std::vector<Variable>& string);
+
+        static void encodeLcaTree    (Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata);
     };
 }
 

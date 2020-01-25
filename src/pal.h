@@ -27,6 +27,4 @@ namespace pal
     std::pair<std::vector<Variable>, bool> readPairs(const std::filesystem::path& path);
     std::vector<Variable> readVariables(const std::filesystem::path& path);
     std::vector<Variable> readSmartVariables(const std::filesystem::path& path);
-
-    void writeYield(std::ofstream& file, const std::vector<Variable>& string, const std::vector<Production>& productions, Settings settings);
 }

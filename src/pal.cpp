@@ -85,12 +85,7 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
 
 bool decode(const std::filesystem::path& input, const std::filesystem::path& output)
 {
-    const auto [metadata, productions, string] = Decoder::decode(input);
-
-    std::ofstream file(output, std::ios::binary);
-    if(not file.is_open()) throw std::runtime_error("could not open file: " + output.string());
-    writeYield(file, string, productions, metadata.settings);
-    return metadata.settings.is_tar();
+    return Decoder::decode(input, output);
 }
 
 // ------------------------------------------------------- //
@@ -170,60 +165,6 @@ std::vector<Variable> readSmartVariables(const std::filesystem::path& path)
     return result;
 }
 
-void writeYield(std::ofstream& file, const std::vector<Variable>& string, const std::vector<Production>& productions, Settings settings)
-{
-    std::vector<std::string> yields(productions.size());
 
-    const auto calcSize = [&](auto base, auto index) -> size_t
-    {
-        if (Settings::is_byte(index)) return base + 1;
-        else if (settings.is_reserved_variable(index)) return base + 2;
-        else return base + yields[index - settings.begin()].size();
-    };
-
-    for(size_t i = 0; i < productions.size(); i++)
-    {
-        const auto evaluate = [&](auto index)
-        {
-            if(Settings::is_byte(index))
-            {
-                yields[i] += index;
-            }
-            else if(settings.is_reserved_variable(index))
-            {
-                const auto [var0, var1] = Settings::convert_from_reserved(index);
-                yields[i] += var0;
-                yields[i] += var1;
-            }
-            else
-            {
-                yields[i] += yields[index - settings.begin()];
-            }
-        };
-
-        yields[i].reserve(calcSize(calcSize(0, productions[i][0]), productions[i][1]));
-        evaluate(productions[i][0]);
-        evaluate(productions[i][1]);
-    }
-
-    for(const auto index : string)
-    {
-        if(Settings::is_byte(index))
-        {
-            file.write(reinterpret_cast<const char*>(&index), 1);
-        }
-        else if(settings.is_reserved_variable(index))
-        {
-            const auto [var0, var1] = Settings::convert_from_reserved(index);
-            file.write(reinterpret_cast<const char*>(&var0), 1);
-            file.write(reinterpret_cast<const char*>(&var1), 1);
-        }
-        else
-        {
-            const auto& yield = yields[index - settings.begin()];
-            file.write(yield.data(), yield.size());
-        }
-    }
-}
 
 }

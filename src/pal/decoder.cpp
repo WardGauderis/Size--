@@ -7,23 +7,32 @@
 // @description : 
 //============================================================================
 
+#include <stack>
 #include "decoder.h"
 
 namespace pal
 {
 
-std::tuple<Metadata, std::vector<Production>, std::vector<Variable>> Decoder::decode(const std::filesystem::path& path)
+bool Decoder::decode(const std::filesystem::path& input, const std::filesystem::path& output)
 {
-    Bitreader reader(path);
+    Bitreader reader(input);
+    Bitwriter writer(output);
 
     const auto metadata = decodeMetadata(reader);
-    auto root = decodeHuffmanTree(reader, metadata);
-    huffman::Decoder decoder(std::move(root));
+    if(metadata.settings.is_lca_encoded())
+    {
+        writeDecodedLcaYield(writer, reader, metadata);
+    }
+    else
+    {
+        auto root = decodeHuffmanTree(reader, metadata);
+        huffman::Decoder decoder(std::move(root));
 
-    auto productions = decodeProductions(reader, decoder, metadata);
-    auto string = decodeString(reader, decoder, metadata);
-
-    return std::make_tuple(metadata, std::move(productions), std::move(string));
+        auto productions = decodeProductions(reader, decoder, metadata);
+        auto string = decodeString(reader, decoder, metadata);
+        writeDecodedYield(writer, string, productions, metadata);
+    }
+    return metadata.settings.is_tar();
 }
 
 Metadata Decoder::decodeMetadata(Bitreader& reader)
@@ -73,6 +82,80 @@ std::vector<Variable> Decoder::decodeString(Bitreader& reader, huffman::Decoder&
         result[i] = decoder.decodeVariable(reader);
     }
     return result;
+}
+
+void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadata metadata)
+{
+    if(metadata.settings.is_lca_encoded() and metadata.settings.has_reserved())
+        throw std::logic_error("cannot be lca encoded and reserved at the same time");
+
+    std::vector<Production> dictionary;
+    std::vector<uint8_t> result;
+    std::stack<Variable> stack;
+
+    std::function<void(Variable)> recurse = [&](Variable v)
+    {
+        if(Settings::is_byte(v))
+        {
+            writer.write_value(v, 8);
+        }
+        else
+        {
+            const auto production = dictionary[v - metadata.settings.begin()];
+            recurse(production[0]);
+            recurse(production[1]);
+        }
+    };
+
+    for(size_t i = 0; i < (2 * metadata.productionSize + 1); i++)
+    {
+        const bool bit = reader.read_bit();
+        if(bit)
+        {
+            const Variable variable = reader.read_value(metadata.charLength);
+            if(Settings::is_byte(variable)) result.emplace_back(variable);
+            else recurse(variable);
+        }
+        else
+        {
+            const auto v2 = stack.top();
+            stack.pop();
+            const auto v1 = stack.top();
+            stack.pop();
+
+            Production p = {v1, v2};
+            dictionary.emplace_back(p);
+        }
+    }
+
+}
+
+void Decoder::writeDecodedYield(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata)
+{
+    const std::function<void(Variable)> recurse = [&](Variable variable)
+    {
+        if(Settings::is_byte(variable))
+        {
+            writer.write_unordered_byte(variable);
+        }
+        else if(metadata.settings.is_reserved_variable(variable))
+        {
+            const auto [var0, var1] = Settings::convert_from_reserved(variable);
+            writer.write_unordered_byte(var0);
+            writer.write_unordered_byte(var1);
+        }
+        else
+        {
+            const auto production = productions[variable - metadata.settings.begin()];
+            recurse(production[0]);
+            recurse(production[1]);
+        }
+    };
+
+    for(const auto index : string)
+    {
+        recurse(index);
+    }
 }
 
 }

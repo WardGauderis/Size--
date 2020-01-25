@@ -7,7 +7,9 @@
 // @description : 
 //============================================================================
 
+#include <unordered_set>
 #include "encoder.h"
+#include "../util/robin_hood.h"
 
 namespace pal
 {
@@ -17,19 +19,27 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
     Bitwriter writer(path);
     encodeMetadata(writer, metadata);
 
-    huffman::Encoder encoder(string, productions, metadata);
+    if(metadata.settings.is_lca_encoded())
+    {
+        if(verbose) std::cout << "encoding with lca special algorithm thing\n";
+        encodeLcaTree(writer, string, productions, metadata);
+    }
+    else
+    {
+        huffman::Encoder encoder(string, productions, metadata);
 
-    encodeHuffmanTree(writer, encoder, metadata);
-    if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
+        encodeHuffmanTree(writer, encoder, metadata);
+        if(verbose) std::cout << "  - after huffman tree, the file is approx: " << writer.getCurrentPos() << " bytes\n";
 
-    encodeProductions(writer, encoder, productions);
-    if(verbose) std::cout << "  - after productions, the file is approx : " << writer.getCurrentPos() << " bytes\n";
+        encodeProductions(writer, encoder, productions);
+        if(verbose) std::cout << "  - after productions, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-    encodeString(writer, encoder, string);
-    if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
+        encodeString(writer, encoder, string);
+        if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-    if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
-    if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
+        if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
+        if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
+    }
 }
 
 void Encoder::encodeMetadata(Bitwriter& writer, Metadata metadata)
@@ -75,6 +85,46 @@ void Encoder::encodeString(Bitwriter& writer, const huffman::Encoder& encoder, c
     {
         encoder.encodeVariable(writer, variable);
     }
+}
+
+void Encoder::encodeLcaTree(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata)
+{
+    if(string.size() != 1) throw std::logic_error("aiaiai Ward");
+
+    if(metadata.settings.is_lca_encoded() and metadata.settings.has_reserved())
+        throw std::logic_error("aiaiai Ward 2");
+
+    std::unordered_map<Variable, Variable> dictionary;
+    size_t current = metadata.settings.begin();
+
+    std::function<void(Variable)> recursive = [&](Variable v)
+    {
+        if (Settings::is_byte(v))
+        {
+            writer.write_bit(true);
+            writer.write_value(v, metadata.charLength);
+        }
+        else
+        {
+            const auto iter = dictionary.find(v);
+            if (iter == dictionary.end())
+            {
+                dictionary.emplace(v, ++current);
+                const auto production = productions[v - metadata.settings.begin()];
+
+                writer.write_bit(false);
+                recursive(production[0]);
+                recursive(production[1]);
+            }
+            else
+            {
+                writer.write_bit(true);
+                writer.write_value(iter->second, metadata.charLength);
+            }
+        }
+    };
+
+    recursive(string[0]);
 }
 
 }

@@ -29,6 +29,11 @@ public:
         if(index != 0) write_buffer();
     }
 
+    void write_unordered_byte(uint8_t byte)
+    {
+        file.write(reinterpret_cast<char*>(&byte), sizeof(uint8_t));
+    }
+
     void write_bit(bool bit) noexcept
     {
         if(index == 64)
