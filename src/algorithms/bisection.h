@@ -43,7 +43,6 @@ namespace algorithm::bisection {
 		productions.reserve(variables.size() / 2);
 
 		std::for_each(variables.begin(), variables.end() - 1, [](auto& elem) { elem += 256; });
-
 		if (not odd) variables.back() += 256;
 
 		bool startReached = false;
