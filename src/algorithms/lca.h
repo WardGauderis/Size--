@@ -5,6 +5,12 @@
 #ifndef SIZE_LCA_H
 #define SIZE_LCA_H
 
+#include "../util/variable.h"
+#include "../util/production.h"
+#include "../util/robin_hood.h"
+#include "../util/settings.h"
+#include "../pal/onlineReader.h"
+
 namespace algorithm::lca {
 
 	inline bool isRepetitive(const std::vector<Variable>& w, const size_t i) {
