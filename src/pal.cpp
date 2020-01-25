@@ -24,7 +24,7 @@
 namespace pal
 {
 
-void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose)
+void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose, bool visualize)
 {
     auto [settings, string, productions] = [&]()
     {
@@ -57,6 +57,9 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
         {
         	OnlineReader reader(input);
 	        return algorithm::olca::compress(reader);
+        } else if(type == Algorithm::lca)
+        {
+        	
         }
 //        else if(type == Algorithm::lzw)
 //        {
@@ -77,7 +80,7 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
     if(tar) settings.flags |= Settings::Flags::tar;
 
     Metadata metadata(string.size(), productions.size(), settings);
-    pal::Encoder::encode(output, string, productions, metadata, verbose, true);
+    pal::Encoder::encode(output, string, productions, metadata, verbose, visualize);
 }
 
 bool decode(const std::filesystem::path& input, const std::filesystem::path& output)

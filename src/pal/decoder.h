@@ -27,10 +27,10 @@ struct Decoder
 
     static Metadata decodeMetadata(Bitreader& reader);
     static std::unique_ptr<huffman::Node> decodeHuffmanTree(Bitreader& reader, Metadata metadata);
-    static std::vector<Production> decodeProductions(Bitreader& reader, huffman::Decoder& decoder, Metadata metadata);
-    static std::vector<Variable> decodeString(Bitreader& reader, huffman::Decoder& decoder, Metadata metadata);
 
-    static std::pair<std::vector<Production>, std::vector<Variable>> decodeWithoutHuffman(Bitreader& reader, Metadata metadata);
+    static std::vector<Production> decodeProductions(Bitreader& reader, huffman::Decoder& decoder, Metadata metadata);
+
+    static std::vector<Variable> decodeString(Bitreader& reader, huffman::Decoder& decoder, Metadata metadata);
 };
 
 }
