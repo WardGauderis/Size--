@@ -76,8 +76,7 @@ namespace algorithm::lzw
         return std::make_tuple(settings, std::move(variables), std::vector<Production>{});
     }
 
-    std::pair<std::vector<Production>, std::vector<Variable>> decompress(
-            const std::experimental::filesystem::path& output, Bitreader& reader, pal::Metadata metadata)
+    std::pair<std::vector<Production>, std::vector<Variable>> decompress(std::vector<Variable> variables)
     {
         std::unordered_map<std::string , uint32_t > map;
         for (int i=0;i<256;i++)
