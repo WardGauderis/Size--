@@ -12,7 +12,7 @@
 
 #include "huffman.h"
 #include "../pal/metadata.h"
-#include "../visualize/visualize.h"
+#include "../visualize/huffman.h"
 
 namespace huffman
 {

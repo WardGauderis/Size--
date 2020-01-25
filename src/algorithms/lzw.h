@@ -26,7 +26,7 @@
 namespace algorithm::lzw
 {
     void decompress(const std::vector<Variable> &variables,
-                    const std::experimental::filesystem::path &output)
+                    const std::filesystem::path &output)
     {
 
         std::ofstream outputfile{output};
@@ -56,7 +56,7 @@ namespace algorithm::lzw
     }
 
     std::tuple<Settings, std::vector<Variable>, std::vector<Production>> compress(
-            const std::experimental::filesystem::path& input)
+            const std::filesystem::path& input)
     {
         // prepare output
         Settings settings;
@@ -91,7 +91,7 @@ namespace algorithm::lzw
             }
         }
         variables.emplace_back(map.at(p));
-        //decompress(variables, std::experimental::filesystem::path("./test.bmp"));
+        //decompress(variables, std::filesystem::path("./test.bmp"));
         return std::make_tuple(settings, std::move(variables), std::vector<Production>{});
     }
 }

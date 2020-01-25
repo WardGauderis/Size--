@@ -117,7 +117,6 @@ void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadat
             dictionary.emplace_back(p);
         }
     }
-
 }
 
 void Decoder::writeDecodedYield(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata)

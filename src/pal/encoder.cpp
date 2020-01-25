@@ -37,8 +37,12 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
         encodeString(writer, encoder, string);
         if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-        if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
-        if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
+        if(visualize)
+        {
+            std::filesystem::create_directory("visuals");
+            visualize::huffmanTree("visuals", "huffman", encoder.root);
+            visualize::parseTree("visuals", "parse", string, productions, metadata);
+        }
     }
 }
 
@@ -101,13 +105,11 @@ void Encoder::encodeLcaTree(Bitwriter& writer, const std::vector<Variable>& stri
     {
         if(Settings::is_byte(variable))
         {
-//            std::cout << "(" << char(variable);
             writer.write_bit(true);
             writer.write_value(variable, metadata.charLength);
         }
         else if(const auto iter = dictionary.find(variable); iter != dictionary.end())
         {
-//            std::cout << "(Y" << iter->second;
             writer.write_bit(true);
             writer.write_value(iter->second + metadata.settings.begin(), metadata.charLength);
         }
@@ -117,7 +119,6 @@ void Encoder::encodeLcaTree(Bitwriter& writer, const std::vector<Variable>& stri
             recurse(production[0]);
             recurse(production[1]);
 
-//            std::cout << ")";
             writer.write_bit(false);
             dictionary.emplace(variable, current++);
         }

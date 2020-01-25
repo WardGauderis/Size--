@@ -9,6 +9,7 @@ file(GLOB_RECURSE SRCS ${SIZE--_SOURCE_DIR}/src/*.cpp)
 add_executable(SIZE-- ${HDRS} ${SRCS})
 target_link_libraries(SIZE-- boost_program_options)
 target_link_libraries(SIZE-- stdc++fs)
+target_link_libraries(SIZE-- pthread)
 set(CMAKE_CXX_FLAGS "-O3 -flto -march=native -mtune=native -Wall -Wextra -Wnon-virtual-dtor -Wold-style-cast -Wunused -Woverloaded-virtual -Wpedantic -Wnull-dereference -Wdouble-promotion -Wformat=2")
 
 # -Wall

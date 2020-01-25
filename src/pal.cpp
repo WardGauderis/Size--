@@ -24,7 +24,7 @@
 namespace pal
 {
 
-void encode(const std::experimental::filesystem::path& input, const std::experimental::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose, bool visualize)
+void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose, bool visualize)
 {
     auto [settings, string, productions] = [&]()
     {
@@ -77,14 +77,14 @@ void encode(const std::experimental::filesystem::path& input, const std::experim
     pal::Encoder::encode(output, string, productions, metadata, verbose, visualize);
 }
 
-bool decode(const std::experimental::filesystem::path& input, const std::experimental::filesystem::path& output)
+bool decode(const std::filesystem::path& input, const std::filesystem::path& output)
 {
     return Decoder::decode(input, output);
 }
 
 // ------------------------------------------------------- //
 
-std::vector<uint8_t> readBytes(const std::experimental::filesystem::path& path)
+std::vector<uint8_t> readBytes(const std::filesystem::path& path)
 {
     auto file = fopen(path.c_str(), "rb");
     if(not file) throw std::runtime_error("could not open file: " + path.string());
@@ -99,7 +99,7 @@ std::vector<uint8_t> readBytes(const std::experimental::filesystem::path& path)
     return string;
 }
 
-std::pair<std::vector<Variable>, bool> readPairs(const std::experimental::filesystem::path& path)
+std::pair<std::vector<Variable>, bool> readPairs(const std::filesystem::path& path)
 {
     auto file = fopen(path.c_str(), "rb");
     if(not file) throw std::runtime_error("could not open file: " + path.string());
@@ -116,14 +116,14 @@ std::pair<std::vector<Variable>, bool> readPairs(const std::experimental::filesy
     return std::make_pair(std::move(variables), size % 2);
 }
 
-std::vector<Variable> readVariables(const std::experimental::filesystem::path& path)
+std::vector<Variable> readVariables(const std::filesystem::path& path)
 {
     const auto bytes = readBytes(path);
     std::vector<Variable> variables(bytes.begin(), bytes.end());
     return variables;
 }
 
-std::vector<Variable> readSmartVariables(const std::experimental::filesystem::path& path)
+std::vector<Variable> readSmartVariables(const std::filesystem::path& path)
 {
     constexpr size_t swap_size = 2000000; // 20 mb
     auto file = fopen(path.c_str(), "rb");

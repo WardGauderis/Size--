@@ -8,6 +8,7 @@
 //============================================================================
 
 #include "huffman.h"
+#include <thread>
 
 namespace huffman
 {
@@ -17,12 +18,36 @@ std::vector<uint32_t> countFrequencies(const std::vector<Variable>& string, cons
     const auto size = metadata.settings.offset(metadata.productionSize);
     std::vector<uint32_t> frequencies(size);
 
-    std::for_each(string.begin(), string.end(), [&](const auto elem){ frequencies[elem]++; });
-
-    for(const auto production : productions)
+    const auto count_chars = [&]()
     {
-        frequencies[production[0]]++;
-        frequencies[production[1]]++;
+        for(const auto variable : string)
+        {
+            frequencies[variable]++;
+        }
+    };
+
+    const auto count_productions = [&]()
+    {
+        for(const auto production : productions)
+        {
+            frequencies[production[0]]++;
+            frequencies[production[1]]++;
+        }
+    };
+
+    // only use multi threading when the file is > 100 mb
+    // otherwise the cost of making new threads vs the work is
+    // too high.
+    if(string.size() > 10000000)
+    {
+        std::thread thread(count_productions);
+        count_chars();
+        thread.join();
+    }
+    else
+    {
+        count_productions();
+        count_chars();
     }
 
     return frequencies;
