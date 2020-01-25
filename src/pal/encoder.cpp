@@ -95,36 +95,35 @@ void Encoder::encodeLcaTree(Bitwriter& writer, const std::vector<Variable>& stri
         throw std::logic_error("aiaiai Ward 2");
 
     std::unordered_map<Variable, Variable> dictionary;
-    size_t current = metadata.settings.begin();
+    size_t current = 0;
 
-    std::function<void(Variable)> recursive = [&](Variable v)
+    std::function<void(Variable)> recurse = [&](Variable variable)
     {
-        if (Settings::is_byte(v))
+        if(Settings::is_byte(variable))
         {
+//            std::cout << "(" << char(variable);
             writer.write_bit(true);
-            writer.write_value(v, metadata.charLength);
+            writer.write_value(variable, metadata.charLength);
+        }
+        else if(const auto iter = dictionary.find(variable); iter != dictionary.end())
+        {
+//            std::cout << "(Y" << iter->second;
+            writer.write_bit(true);
+            writer.write_value(iter->second + metadata.settings.begin(), metadata.charLength);
         }
         else
         {
-            const auto iter = dictionary.find(v);
-            if (iter == dictionary.end())
-            {
-                dictionary.emplace(v, ++current);
-                const auto production = productions[v - metadata.settings.begin()];
+            const auto production = productions[variable - metadata.settings.begin()];
+            recurse(production[0]);
+            recurse(production[1]);
 
-                writer.write_bit(false);
-                recursive(production[0]);
-                recursive(production[1]);
-            }
-            else
-            {
-                writer.write_bit(true);
-                writer.write_value(iter->second, metadata.charLength);
-            }
+//            std::cout << ")";
+            writer.write_bit(false);
+            dictionary.emplace(variable, current++);
         }
     };
 
-    recursive(string[0]);
+    recurse(string[0]);
 }
 
 }

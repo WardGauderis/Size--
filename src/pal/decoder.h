@@ -37,6 +37,8 @@ struct Decoder
     static void writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadata metadata);
 
     static void writeDecodedYield(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata);
+
+    static void writeRecursiveVariable(Bitwriter& writer, Variable variable, const std::vector<Production>& productions, Metadata metadata);
 };
 
 }

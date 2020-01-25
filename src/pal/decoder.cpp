@@ -90,22 +90,7 @@ void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadat
         throw std::logic_error("cannot be lca encoded and reserved at the same time");
 
     std::vector<Production> dictionary;
-    std::vector<uint8_t> result;
     std::stack<Variable> stack;
-
-    std::function<void(Variable)> recurse = [&](Variable v)
-    {
-        if(Settings::is_byte(v))
-        {
-            writer.write_value(v, 8);
-        }
-        else
-        {
-            const auto production = dictionary[v - metadata.settings.begin()];
-            recurse(production[0]);
-            recurse(production[1]);
-        }
-    };
 
     for(size_t i = 0; i < (2 * metadata.productionSize + 1); i++)
     {
@@ -113,15 +98,16 @@ void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadat
         if(bit)
         {
             const Variable variable = reader.read_value(metadata.charLength);
-            if(Settings::is_byte(variable)) result.emplace_back(variable);
-            else recurse(variable);
+            writeRecursiveVariable(writer, variable, dictionary, metadata);
+            stack.push(variable);
         }
         else
         {
             const auto v2 = stack.top();
             stack.pop();
             const auto v1 = stack.top();
-            stack.pop();
+            stack.top() = metadata.settings.begin() + dictionary.size();
+            // instead of popping we replace
 
             Production p = {v1, v2};
             dictionary.emplace_back(p);
@@ -132,29 +118,29 @@ void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadat
 
 void Decoder::writeDecodedYield(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata)
 {
-    const std::function<void(Variable)> recurse = [&](Variable variable)
+    for(const auto variable : string)
     {
-        if(Settings::is_byte(variable))
-        {
-            writer.write_unordered_byte(variable);
-        }
-        else if(metadata.settings.is_reserved_variable(variable))
-        {
-            const auto [var0, var1] = Settings::convert_from_reserved(variable);
-            writer.write_unordered_byte(var0);
-            writer.write_unordered_byte(var1);
-        }
-        else
-        {
-            const auto production = productions[variable - metadata.settings.begin()];
-            recurse(production[0]);
-            recurse(production[1]);
-        }
-    };
+        writeRecursiveVariable(writer, variable, productions, metadata);
+    }
+}
 
-    for(const auto index : string)
+void Decoder::writeRecursiveVariable(Bitwriter& writer, Variable variable, const std::vector<Production>& productions, Metadata metadata)
+{
+    if(Settings::is_byte(variable))
     {
-        recurse(index);
+        writer.write_unordered_byte(variable);
+    }
+    else if(metadata.settings.is_reserved_variable(variable))
+    {
+        const auto [var0, var1] = Settings::convert_from_reserved(variable);
+        writer.write_unordered_byte(var0);
+        writer.write_unordered_byte(var1);
+    }
+    else
+    {
+        const auto production = productions[variable - metadata.settings.begin()];
+        writeRecursiveVariable(writer, production[0], productions, metadata);
+        writeRecursiveVariable(writer, production[1], productions, metadata);
     }
 }
 
