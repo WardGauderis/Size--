@@ -19,6 +19,8 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
     Bitwriter writer(path);
     encodeMetadata(writer, metadata);
 
+    if(visualize) std::filesystem::create_directory("visuals");
+
     if(metadata.settings.is_lca_encoded())
     {
         if(verbose) std::cout << "encoding with lca special algorithm thing\n";
@@ -37,13 +39,9 @@ void Encoder::encode(const std::filesystem::path& path, const std::vector<Variab
         encodeString(writer, encoder, string);
         if(verbose) std::cout << "  - after root string, the file is approx : " << writer.getCurrentPos() << " bytes\n";
 
-        if(visualize)
-        {
-            std::filesystem::create_directory("visuals");
-            visualize::huffmanTree("visuals", "huffman", encoder.root);
-            visualize::parseTree("visuals", "parse", string, productions, metadata);
-        }
+        if(visualize) visualize::huffmanTree("visuals", "huffman", encoder.root);
     }
+    if(visualize) visualize::parseTree("visuals", "parse", string, productions, metadata);
 }
 
 void Encoder::encodeMetadata(Bitwriter& writer, Metadata metadata)

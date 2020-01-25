@@ -132,7 +132,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     file << std::flush;
 
     system(("dot -Tpng " + dot.string() + " -o " + png.string()).c_str());
-    std::filesystem::remove(dot);
+//    std::filesystem::remove(dot);
 }
 
 }
