@@ -57,6 +57,9 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
         {
         	OnlineReader reader(input);
 	        return algorithm::olca::compress(reader);
+        } else if(type == Algorithm::lca)
+        {
+        	
         }
 //        else if(type == Algorithm::lzw)
 //        {

@@ -12,6 +12,7 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 	desc.add_options()
 			("help,h", "produce this message")
 			("verbose,v", "be verbose")
+			("visualize,V", "visualize the compression algorithm in dot (only applicable to the compression of small files)")
 			("output,o", value<std::filesystem::path>(), "output file/directory (optional)")
 			("create,c", value<Algorithm>(), "create a new archive with the specified algorithm (index or name):\n"
 			                                 "0 none\n"
@@ -123,9 +124,8 @@ void Controller::compress() {
 		returnValue += system(command.c_str());
 		in = temp.string();
 	}
-
-
-	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"), false);
+	
+	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"), vm.count("visualize"));
 }
 
 void Controller::extract() {
