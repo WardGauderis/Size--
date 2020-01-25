@@ -85,7 +85,14 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
         const auto curr = level % 2;
         for(size_t i = 0; i < buffers[curr].size(); i++)
         {
-            file << "<f" << i << ">" << buffers[curr][i];
+            if(std::isprint(buffers[curr][i]) and buffers[curr][i] < 128)
+            {
+                file << "<f" << i << ">" << static_cast<char>(buffers[curr][i]);
+            }
+            else
+            {
+                file << "<f" << i << ">" << buffers[curr][i];
+            }
             if(i != buffers[curr].size() - 1) file << "|";
         }
         file << "\"];\n";
@@ -133,7 +140,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     file << std::flush;
 
     system(("dot -Tpng " + dot.string() + " -o " + png.string()).c_str());
-    std::filesystem::remove(dot);
+//    std::filesystem::remove(dot);
 }
 
 }
