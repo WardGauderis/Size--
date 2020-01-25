@@ -124,7 +124,7 @@ void Controller::compress() {
 		returnValue += system(command.c_str());
 		in = temp.string();
 	}
-	
+
 	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"), vm.count("visualize"));
 }
 

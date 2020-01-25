@@ -28,15 +28,15 @@ namespace algorithm::olca {
 		Settings settings;
 		Variable start = UINT32_MAX;
 
-		static bool isRepetitive(const std::deque<Variable>& w, size_t i);
+		static inline bool isRepetitive(const std::deque<Variable>& w, size_t i);
 
-		static bool isMinimal(const std::deque<Variable>& w, size_t i);
+		static inline bool isMinimal(const std::deque<Variable>& w, size_t i);
 
-		static Variable lca(Variable x1, Variable x2);
+		static inline Variable lca(Variable x1, Variable x2);
 
-		static bool isMaximal(const std::deque<Variable>& w, size_t i);
+		static inline bool isMaximal(const std::deque<Variable>& w, size_t i);
 
-		static bool isPair(const std::deque<Variable>& w, size_t i);
+		static inline bool isPair(const std::deque<Variable>& w, size_t i);
 
 		Variable getVariable(Variable a, Variable b);
 

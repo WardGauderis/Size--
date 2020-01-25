@@ -5,7 +5,7 @@
 #include <cmath>
 #include "olca.h"
 
-algorithm::olca::OLCA::OLCA(OnlineReader& reader) {
+algorithm::olca::OLCA::OLCA(OnlineReader& reader): settings(Settings::Flags::lca_encoding) {
 	revDict.reserve(reader.getSize() / 256);
 	productions.reserve(reader.getSize() / 256);
 }
@@ -78,8 +78,7 @@ void algorithm::olca::OLCA::insertVariable(size_t index, Variable x) {
 }
 
 Variable algorithm::olca::OLCA::getVariable(Variable a, Variable b) {
-	if (Settings::is_reserved_rule(a, b)) return Settings::convert_to_reserved(a, b);
-
+//	if (Settings::is_reserved_rule(a, b)) return Settings::convert_to_reserved(a, b);
 
 	static uint32_t offset = 0;
 	const auto pair = revDict.emplace(Production{a, b}, settings.offset(offset));

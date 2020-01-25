@@ -3,6 +3,11 @@
 
 int main(int argc, char** argv)
 {
-    Controller controller(argc, argv);
-	return controller.getReturnValue();
+	try {
+		Controller controller(argc, argv);
+		return controller.getReturnValue();
+	} catch (const std::exception& ex){
+		std::cerr << ex.what() << std::endl;
+		return 1;
+	}
 }

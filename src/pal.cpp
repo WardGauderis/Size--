@@ -48,18 +48,14 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
 	        auto [variables, odd] = readPairs(input);
 	        return algorithm::bisectionPlusPlus::compress(std::move(variables), odd);
         }
-//        else if(type == Algorithm::lca)
-//        {
-//	        auto [variables, odd] = readPairs(input);
-//	        return algorithm::lca::compress(std::move(variables), odd);
-//        }
         else if(type == Algorithm::olca)
         {
         	OnlineReader reader(input);
 	        return algorithm::olca::compress(reader);
         } else if(type == Algorithm::lca)
         {
-        	
+        	auto variables = readVariables(input);
+        	return algorithm::lca::compress(std::move(variables));
         }
 //        else if(type == Algorithm::lzw)
 //        {
