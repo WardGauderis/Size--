@@ -19,6 +19,7 @@ class OnlineWriter
 public:
     explicit OnlineWriter(const std::filesystem::path& path) : writer(path)
     {
+        if(not std::filesystem::exists(path)) throw std::runtime_error("deze file bestaat niet mano");
         writeMetadata(pal::Metadata(0,0,Settings(0)));
     }
 

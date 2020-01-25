@@ -23,6 +23,10 @@ bool Decoder::decode(const std::filesystem::path& input, const std::filesystem::
     {
         writeDecodedLcaYield(writer, reader, metadata);
     }
+    else if(metadata.settings.is_lzw_compressed())
+    {
+        // write call to decompression here
+    }
     else
     {
         auto root = decodeHuffmanTree(reader, metadata);

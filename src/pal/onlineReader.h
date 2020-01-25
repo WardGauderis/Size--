@@ -17,9 +17,10 @@
 class OnlineReader
 {
 public:
-    explicit OnlineReader(const std::filesystem::path& path)
+    explicit OnlineReader(const std::filesystem::path& path) : stream(path)
     {
-        stream = std::ifstream(path);
+        if(not std::filesystem::exists(path)) throw std::runtime_error("deze file bestaat niet mano");
+        if(not stream.is_open()) throw std::runtime_error("could not open file");
     }
 
     Variable readVariable()

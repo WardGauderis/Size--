@@ -23,6 +23,7 @@ struct Settings
         reserved = 1u,
         tar = 2u,
         lca_encoding = 4u,
+        lzw = 8u,
     };
 
     explicit Settings(uint8_t flags = Flags::reserved) : flags(flags) {}
@@ -78,6 +79,10 @@ struct Settings
     [[nodiscard]] bool is_lca_encoded() const noexcept
     {
         return flags & lca_encoding;
+    }
+    [[nodiscard]] bool is_lzw_compressed() const noexcept
+    {
+        return flags & lzw;
     }
 
     uint8_t flags;
