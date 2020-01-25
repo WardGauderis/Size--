@@ -105,6 +105,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
 
         for(size_t i = 0; i < buffers[curr].size(); i++)
         {
+            file << "level" << (level + 1) << " -> " << "level" << level << "[style = invis, weight= 100];\n";
             const auto write_file = [&]()
             {
                 file << "level" << level+1 << ":f" << buffers[not curr].size() << " -> " << "level" << level << ":f" << i << ";\n";
@@ -140,7 +141,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     file << std::flush;
 
     system(("dot -Tpng " + dot.string() + " -o " + png.string()).c_str());
-//    std::filesystem::remove(dot);
+    std::filesystem::remove(dot);
 }
 
 }
