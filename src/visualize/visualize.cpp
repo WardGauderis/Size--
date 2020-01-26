@@ -7,7 +7,7 @@
 // @description : 
 //============================================================================
 
-#include "visualize.h"
+#include "huffman.h"
 
 namespace visualize
 {
@@ -66,7 +66,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     std::ofstream file(dot);
     const auto& settings = metadata.settings;
 
-    const auto size = std::min(32ul, string.size());
+    const auto size = std::min(16ul, string.size());
 
     file << "digraph G{\n";
     file << "splines=false;\n";
@@ -77,17 +77,27 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
     buffers[0] = std::vector<Variable>(string.begin(), string.begin() + size);
     buffers[1] = std::vector<Variable>();
 
-    for(size_t level = 0; level < 10; level++)
+    constexpr size_t max_levels = 6;
+    for(size_t level = 0; level <= max_levels; level++)
     {
         file << "level" << level << " [fixedsize=true, width=25, height=0.5, label = \"";
 
         const auto curr = level % 2;
         for(size_t i = 0; i < buffers[curr].size(); i++)
         {
-            file << "<f" << i << ">" << buffers[curr][i];
+            if(std::isprint(buffers[curr][i]) and buffers[curr][i] < 128)
+            {
+                file << "<f" << i << ">" << static_cast<char>(buffers[curr][i]);
+            }
+            else
+            {
+                file << "<f" << i << ">" << buffers[curr][i];
+            }
             if(i != buffers[curr].size() - 1) file << "|";
         }
         file << "\"];\n";
+
+        if(level == max_levels) break;
 
         // swap buffers and write file
         buffers[not curr].clear();
@@ -95,6 +105,7 @@ void parseTree(const std::filesystem::path& directory, const std::string& name, 
 
         for(size_t i = 0; i < buffers[curr].size(); i++)
         {
+            file << "level" << (level + 1) << " -> " << "level" << level << "[style = invis, weight= 100];\n";
             const auto write_file = [&]()
             {
                 file << "level" << level+1 << ":f" << buffers[not curr].size() << " -> " << "level" << level << ":f" << i << ";\n";

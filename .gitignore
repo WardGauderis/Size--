@@ -9,5 +9,4 @@ SIZE--
 .clangd
 .idea
 cmake-build-*
-*.png
 *.dot
