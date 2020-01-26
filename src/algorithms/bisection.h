@@ -100,7 +100,7 @@ namespace algorithm::bisectionPlusPlus {
 
 		productions.reserve(size / 256);
 		map.reserve(size / 256);
-		counters.reserve(size / 8);
+		counters.reserve(size / 256);
 
 		while (levelBegin != previousLevelBegin) {
 			size_t index = 0;
