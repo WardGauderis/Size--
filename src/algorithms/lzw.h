@@ -19,7 +19,6 @@
 #include "../util/variable.h"
 #include "../util/production.h"
 #include "../util/settings.h"
-#include "../util/settings.h"
 #include "../pal/onlineReader.h"
 #include "../pal/onlineWriter.h"
 
@@ -91,7 +90,7 @@ namespace algorithm::lzw
             }
         }
         variables.emplace_back(map.at(p));
-        //decompress(variables, std::experimental::filesystem::path("./test.bmp"));
+        //decompress(variables, std::experimental::filesystem::path("./test.txt"));
         return std::make_tuple(settings, std::move(variables), std::vector<Production>{});
     }
 }

@@ -10,10 +10,17 @@
 #include <stack>
 #include "decoder.h"
 
+// lzw.h includen geeft errors, repair of bisection includen ook
+namespace algorithm::lzw
+{
+    void decompress(const std::vector<Variable> &variables,
+                    const std::experimental::filesystem::path &output);
+}
+
 namespace pal
 {
 
-bool Decoder::decode(const std::filesystem::path& input, const std::filesystem::path& output)
+bool Decoder::decode(const std::experimental::filesystem::path& input, const std::experimental::filesystem::path& output)
 {
     Bitreader reader(input);
     Bitwriter writer(output);
@@ -25,7 +32,10 @@ bool Decoder::decode(const std::filesystem::path& input, const std::filesystem::
     }
     else if(metadata.settings.is_lzw_compressed())
     {
-        // write call to decompression here
+        auto root = decodeHuffmanTree(reader, metadata);
+        huffman::Decoder decoder(std::move(root));
+        auto string = decodeString(reader, decoder, metadata);
+        algorithm::lzw::decompress(string, output);
     }
     else
     {
