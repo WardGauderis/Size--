@@ -58,7 +58,7 @@ namespace algorithm::lzw
             const std::experimental::filesystem::path& input)
     {
         // prepare output
-        Settings settings;
+        Settings settings(Settings::Flags::lzw);
         std::vector<Variable> variables;
         variables.reserve(100000);
 
@@ -90,7 +90,7 @@ namespace algorithm::lzw
             }
         }
         variables.emplace_back(map.at(p));
-        //decompress(variables, std::experimental::filesystem::path("./test.txt"));
+        //decompress(variables, std::experimental::filesystem::path("./test.bmp"));
         return std::make_tuple(settings, std::move(variables), std::vector<Production>{});
     }
 }
