@@ -19,8 +19,8 @@ enum class Algorithm {
 	olca,
 	repair,
 	sequitur,
-	sequential,
-	lzw
+	lzw,
+	sequential
 };
 
 enum class Mode

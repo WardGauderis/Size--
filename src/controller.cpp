@@ -22,8 +22,8 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 			                                 "4 OLCA\n"
 			                                 "5 repair *\n"
 			                                 "6 sequitur\n"
-			                                 "7 sequential\n"
-			                                 "8 LZW")
+			                                 "8 LZW\n"
+			                                 "7 sequential")
 			("mode,m", value<Mode>()->default_value(Mode::none_specified),
 			 "run the algorithm in a certain mode (index or name; optional; only applies to algorithms with a *):\n"
 			 "0 none\n"
