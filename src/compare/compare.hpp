@@ -10,20 +10,38 @@
 #include <experimental/filesystem>
 #include <fstream>
 #include <chrono>
+#include "../pal.h"
+
 namespace compare
 {
     std::string getAlgoName(int i)
     {
         switch(i)
         {
-            case 1: return "None";
-            case 2: return "Bisection";
-            case 3: return "Bisection++";
-            case 4: return "LCA";
-            case 5: return "OLCA";
+            case 0: return "None";
+            case 1: return "Bisection";
+            case 2: return "Bisection++";
+            case 3: return "LCA";
+            case 4: return "OLCA";
+            case 5: return "Repair";
             case 6: return "Sequitur";
             case 7: return "LZW";
             default: return "something went wrong";
+        }
+    };
+
+    Algorithm getAlgoType(int i)
+    {
+        switch(i)
+        {
+            case 0: return Algorithm::none;
+            case 1: return Algorithm::bisection;
+            case 2: return Algorithm::bisectionPlusPlus;
+            case 3: return Algorithm::lca;
+            case 4: return Algorithm::olca;
+            case 5: return Algorithm::repair;
+            case 6: return Algorithm::sequitur;
+            case 7: return Algorithm::lzw;
         }
     };
 
@@ -60,25 +78,25 @@ namespace compare
         file << "Comparison for file: " << name;
         file << "<br>Original size: " << std::experimental::filesystem::file_size(filename) << "B";
         file << "<table>";
-        for (int i=0;i<=6;i++) {
+        for (int i=-1;i<=7;i++) {
             file << "<tr>";
 
             std::string command = "./SIZE-- -c" + std::to_string(i) + " " + filename;
             std::chrono::time_point start = std::chrono::high_resolution_clock::now();
-            if (i != 0) system(command.c_str());
+            if (i != -1) pal::encode(filename, name + ".pal",getAlgoType(i), Mode::none_specified, false, false, false);
             std::chrono::time_point end = std::chrono::high_resolution_clock::now();
             uint32_t dur = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 
 
-            if (dur<mintime and i != 0)
+            if (dur<mintime and i !=0 and i != -1)
             {
                 mintimealgo = i;
                 mintime = dur;
             }
             uint32_t size = std::numeric_limits<uint32_t>::max();
-            if (i !=0) size = std::experimental::filesystem::file_size( "./" + name + ".pal");
+            if (i !=-1) size = std::experimental::filesystem::file_size( "./" + name + ".pal");
 
-            if (size<minsize and i !=0)
+            if (size<minsize and i != -1)
             {
                 minsizealgo = i;
                 minsize = size;
@@ -86,7 +104,7 @@ namespace compare
 
             for (int j=0;j<=3;j++) {
                 file << "<th>";
-                if (i==0)
+                if (i==-1)
                 {
                     switch(j)
                     {
@@ -113,7 +131,8 @@ namespace compare
         << "<br>The fastest algorithm is: " + getAlgoName(mintimealgo);
         file.close();
 
-        std::string command = "./SIZE-- -c" + std::to_string(minsizealgo) + " " + filename;
+        pal::encode(filename, name + ".pal",getAlgoType(minsizealgo), Mode::none_specified, false, false, false);
+
         system(command.c_str());
     }
 }
