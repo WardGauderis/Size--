@@ -48,6 +48,8 @@ namespace algorithm::lca {
 	Variable
 	getVariable(std::vector<Production>& productions, const Settings& settings,
 	            robin_hood::unordered_flat_map<Production, Variable>& revDict, Variable a, Variable b) {
+		if (Settings::is_reserved_rule(a, b)) return Settings::convert_to_reserved(a, b);
+
 		static uint32_t offset = 0;
 		const auto pair = revDict.emplace(Production{a, b}, settings.offset(offset));
 		if (pair.second) {
@@ -59,35 +61,102 @@ namespace algorithm::lca {
 
 	std::tuple<Settings, std::vector<Variable>, std::vector<Production>>
 	compress(std::vector<Variable>&& variables) {
-		const Settings settings(Settings::Flags::lca_encoding);
+		const Settings settings;
 
 		std::vector<Production> productions;
 		robin_hood::unordered_flat_map<Production, Variable> revDict;
+		robin_hood::unordered_flat_map<Production, Counter<4>> counters;
+		productions.reserve(variables.size() / 256);
+		revDict.reserve(variables.size() / 256);
+		counters.reserve(variables.size() / 256);
+		std::cout << variables.size() << std::endl;
 
-		while (variables.size() != 1) {
+		bool changed = true;
+
+		while (changed) {
+			changed = false;
+
+			{
+				size_t oldPos = 0;
+				while (oldPos < variables.size() - 2) {
+					if (isPair(variables, oldPos)) {
+						const auto pair = counters.emplace(Production{variables[oldPos], variables[oldPos + 1]},
+						                                   Counter<4>());
+						if (!pair.second) {
+							++((*pair.first).second);
+						}
+						oldPos += 2;
+					} else {
+						const auto pair = counters.emplace(Production{variables[oldPos + 1], variables[oldPos + 2]},
+						                                   Counter<4>());
+						if (!pair.second) {
+							++((*pair.first).second);
+						}
+						oldPos += 3;
+					}
+				}
+
+				if (oldPos == variables.size() - 2) {
+					const auto pair = counters.emplace(Production{variables[oldPos], variables[oldPos + 1]},
+					                                   Counter<4>());
+					if (!pair.second) {
+						++((*pair.first).second);
+					}
+				}
+			}
+
 			size_t oldPos = 0;
 			size_t newPos = 0;
 			while (oldPos < variables.size() - 2) {
 				if (isPair(variables, oldPos)) {
-					variables[newPos] = getVariable(productions, settings, revDict, variables[oldPos], variables[oldPos + 1]);
+					if (!counters[{variables[oldPos], variables[oldPos + 1]}]()) {
+						variables[newPos++] = variables[oldPos];
+						variables[newPos++] = variables[oldPos + 1];
+						oldPos += 2;
+						continue;
+					}
+					variables[newPos] = getVariable(productions, settings, revDict, variables[oldPos],
+					                                variables[oldPos + 1]);
+					changed = true;
 					oldPos += 2;
 				} else {
-					variables[newPos] = variables[oldPos];
-					variables[++newPos] = getVariable(productions, settings, revDict, variables[oldPos + 1],
-					                                  variables[oldPos + 2]);
+					variables[newPos++] = variables[oldPos];
+					if (!counters[{variables[oldPos + 1], variables[oldPos + 2]}]()) {
+						variables[newPos++] = variables[oldPos + 1];
+						variables[newPos++] = variables[oldPos + 2];
+						oldPos += 3;
+						continue;
+					}
+					variables[newPos] = getVariable(productions, settings, revDict, variables[oldPos + 1],
+					                                variables[oldPos + 2]);
+					changed = true;
 					oldPos += 3;
 				}
 				++newPos;
 			}
 
-			if(oldPos == variables.size() - 2){
-				variables[newPos++] = getVariable(productions, settings, revDict, variables[oldPos], variables[oldPos + 1]);
-			} else if (oldPos == variables.size() - 1){
+			if (oldPos == variables.size() - 2) {
+				if (!counters[{variables[oldPos], variables[oldPos + 1]}]()) {
+					variables[newPos++] = variables[oldPos];
+					variables[newPos++] = variables[oldPos + 1];
+				} else {
+					variables[newPos++] = getVariable(productions, settings, revDict, variables[oldPos],
+					                                  variables[oldPos + 1]);
+					changed = true;
+				}
+			} else if (oldPos == variables.size() - 1) {
 				variables[newPos++] = variables[oldPos];
+			}
+
+			if (counters.load_factor() > 0.25f) {
+				counters.clear();
 			}
 
 			variables.resize(newPos);
 		}
+
+		std::cout << variables.size() << std::endl;
+		std::cout << productions.size() << std::endl;
 
 		return std::make_tuple(settings, std::move(variables), std::move(productions));
 	}

@@ -80,7 +80,7 @@ void algorithm::olca::OLCA::insertVariable(size_t index, Variable x) {
 Variable algorithm::olca::OLCA::getVariable(Variable a, Variable b) {
 //	if (Settings::is_reserved_rule(a, b)) return Settings::convert_to_reserved(a, b);
 
-	static uint32_t offset = 0;
+	static size_t offset = 0;
 	const auto pair = revDict.emplace(Production{a, b}, settings.offset(offset));
 	if (pair.second) {
 		++offset;
