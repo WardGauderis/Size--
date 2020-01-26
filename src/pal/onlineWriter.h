@@ -17,29 +17,19 @@
 class OnlineWriter
 {
 public:
-    explicit OnlineWriter(const std::filesystem::path& path) : writer(path)
+    explicit OnlineWriter(const std::filesystem::path& path, pal::Metadata metadata) : writer(path)
     {
         if(not std::filesystem::exists(path)) throw std::runtime_error("deze file bestaat niet mano");
-        writeMetadata(pal::Metadata(0,0,Settings(0)));
+        writer.write_value(metadata.stringSize, 32u);
+        writer.write_value(metadata.productionSize, 32u);
+        writer.write_value(metadata.settings.flags, 8u);
+        writer.write_value(93u, 8u);
     }
 
     template<typename Type>
     void writeValue(Type value, uint8_t size)
     {
         writer.write_value(value, size);
-    }
-
-    void writeMetadata(pal::Metadata metadata)
-    {
-        uint8_t unique = 93;
-
-        auto& file = writer.get_file();
-        file.seekp(0);
-        file.write(reinterpret_cast<char*>(&metadata.stringSize    ), sizeof(metadata.stringSize));
-        file.write(reinterpret_cast<char*>(&metadata.productionSize), sizeof(metadata.productionSize));
-        file.write(reinterpret_cast<char*>(&metadata.settings.flags), sizeof(metadata.settings.flags));
-        file.write(reinterpret_cast<char*>(&unique), sizeof(uint8_t));
-        file.seekp(std::ios_base::end);
     }
 private:
     Bitwriter writer;

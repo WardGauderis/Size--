@@ -8,19 +8,13 @@
 //============================================================================
 
 #include <stack>
+#include "../util/robin_hood.h"
 #include "decoder.h"
-
-// lzw.h includen geeft errors, repair of bisection includen ook
-namespace algorithm::lzw
-{
-    void decompress(const std::vector<Variable> &variables,
-                    const std::experimental::filesystem::path &output);
-}
 
 namespace pal
 {
 
-bool Decoder::decode(const std::experimental::filesystem::path& input, const std::experimental::filesystem::path& output)
+bool Decoder::decode(const std::filesystem::path& input, const std::filesystem::path& output)
 {
     Bitreader reader(input);
     Bitwriter writer(output);
@@ -32,10 +26,7 @@ bool Decoder::decode(const std::experimental::filesystem::path& input, const std
     }
     else if(metadata.settings.is_lzw_compressed())
     {
-        auto root = decodeHuffmanTree(reader, metadata);
-        huffman::Decoder decoder(std::move(root));
-        auto string = decodeString(reader, decoder, metadata);
-        algorithm::lzw::decompress(string, output);
+        writeDecodedLzwYield(writer, reader, metadata);
     }
     else
     {
@@ -96,6 +87,38 @@ std::vector<Variable> Decoder::decodeString(Bitreader& reader, huffman::Decoder&
         result[i] = decoder.decodeVariable(reader);
     }
     return result;
+}
+
+void Decoder::writeDecodedLzwYield(Bitwriter& writer, Bitreader& reader, Metadata metadata)
+{
+    robin_hood::unordered_map<Variable, std::string> dict;
+    Variable current = 256;
+
+    for(Variable i = 0; i < current; i++)
+    {
+        dict.emplace(i, std::string(1, static_cast<char>(i)));
+    }
+
+    Variable old = reader.read_value(std::floor(std::log2(dict.size())) + 1), index;
+    std::string str = dict[old];
+    writer.write_unordered_string(str);
+
+    char curr_char = str[0];
+
+    for (size_t i = 1; i < metadata.stringSize; i++)
+    {
+        const auto charLength = std::floor(std::log2(dict.size() + 1)) + 1;
+        index = reader.read_value(charLength);
+
+        if (dict.find(index) == dict.end()) str = dict[old] + curr_char;
+        else str = dict[index];
+
+        writer.write_unordered_string(str);
+        curr_char = str[0];
+        dict[current] = dict[old] + curr_char;
+        current++;
+        old = index;
+    }
 }
 
 void Decoder::writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadata metadata)

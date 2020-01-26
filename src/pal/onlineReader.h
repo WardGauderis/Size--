@@ -30,6 +30,13 @@ public:
         return res;
     }
 
+    uint8_t readByte()
+    {
+        uint8_t res = 0;
+        stream.read(reinterpret_cast<char*>(&res), sizeof(uint8_t));
+        return res;
+    }
+
     size_t getSize()
     {
         if(stream.tellg() != 0) throw std::runtime_error("getSize must be called before reading");

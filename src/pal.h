@@ -15,8 +15,9 @@
 
 #include "util/settings.h"
 #include "util/production.h"
-#include "algorithms/type.h"
 #include "util/variable.h"
+#include "algorithms/type.h"
+
 
 namespace pal
 {

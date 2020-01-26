@@ -34,6 +34,11 @@ public:
         file.write(reinterpret_cast<char*>(&byte), sizeof(uint8_t));
     }
 
+    void write_unordered_string(const std::string& str)
+    {
+        file.write(str.data(), str.size());
+    }
+
     void write_bit(bool bit) noexcept
     {
         if(index == 64)

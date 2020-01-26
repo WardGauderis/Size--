@@ -10,9 +10,9 @@
 #include <numeric>
 
 #include "pal.h"
-
 #include "pal/decoder.h"
 #include "pal/encoder.h"
+
 #include "algorithms/bisection.h"
 #include "algorithms/repair.h"
 #include "algorithms/lzw.h"
@@ -52,13 +52,16 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
         {
         	OnlineReader reader(input);
 	        return algorithm::olca::compress(reader);
-        } else if(type == Algorithm::lca)
+        }
+        else if(type == Algorithm::lca)
         {
         	auto variables = readVariables(input);
         	return algorithm::lca::compress(std::move(variables));
-        } else if(type == Algorithm::lzw)
+        }
+        else if(type == Algorithm::lzw)
         {
-            return algorithm::lzw::compress(input);
+            algorithm::lzw::compress(input, output);
+            exit(0);
         }
         else if(type == Algorithm::repair)
         {

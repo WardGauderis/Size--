@@ -34,6 +34,8 @@ struct Decoder
 
     static std::vector<Variable> decodeString(Bitreader& reader, huffman::Decoder& decoder, Metadata metadata);
 
+    static void writeDecodedLzwYield(Bitwriter& writer, Bitreader& reader, Metadata metadata);
+
     static void writeDecodedLcaYield(Bitwriter& writer, Bitreader& reader, Metadata metadata);
 
     static void writeDecodedYield(Bitwriter& writer, const std::vector<Variable>& string, const std::vector<Production>& productions, Metadata metadata);
