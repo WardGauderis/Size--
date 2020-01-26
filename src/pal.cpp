@@ -26,6 +26,11 @@ namespace pal
 
 void encode(const std::filesystem::path& input, const std::filesystem::path& output, Algorithm type, Mode mode, bool tar, bool verbose, bool visualize)
 {
+	if(type == Algorithm::lzw){
+		algorithm::lzw::compress(input, output);
+		return;
+	}
+
     auto [settings, string, productions] = [&]()
     {
         if(type == Algorithm::none)
@@ -58,15 +63,13 @@ void encode(const std::filesystem::path& input, const std::filesystem::path& out
         	auto variables = readVariables(input);
         	return algorithm::lca::compress(std::move(variables));
         }
-        else if(type == Algorithm::lzw)
-        {
-            algorithm::lzw::compress(input, output);
-            exit(0);
-        }
         else if(type == Algorithm::repair)
         {
             auto variables = readVariables(input);
             return algorithm::repair::compress(std::move(variables), mode);
+        }
+        else if(type == Algorithm::sequential){
+	        throw std::runtime_error("Sequential could not be implemented in SIZE-- on time");
         }
         else
         {
