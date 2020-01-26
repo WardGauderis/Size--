@@ -1,5 +1,5 @@
 # SIZE--
-### Machines en berekenbaarheid
+### Machines en Berekenbaarheid
 #### Thomas Dooms - Ward Gauderis - Mano Marichal - UAntwerpen bachelor 2 Informatica
 
 #### Compilation:
