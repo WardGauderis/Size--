@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "../util/settings.h"
 #include "../bitio/bitwriter.h"
 #include "metadata.h"
 

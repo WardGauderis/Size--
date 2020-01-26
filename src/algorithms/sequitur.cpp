@@ -8,8 +8,6 @@
 // =====================================================================
 
 #include "sequitur.h"
-#include <iostream>
-#include <fstream>
 using namespace algorithm::sequitur;
 
 void Encoder::erase(Node *node)

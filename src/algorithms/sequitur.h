@@ -18,7 +18,6 @@
 #include <boost/functional/hash.hpp>
 #include <tuple>
 
-#include "../util/variable.h"
 #include "../util/production.h"
 #include "../util/settings.h"
 

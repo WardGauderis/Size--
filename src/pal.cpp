@@ -7,7 +7,6 @@
 // @description : 
 //============================================================================
 
-#include <numeric>
 
 #include "pal.h"
 #include "pal/decoder.h"

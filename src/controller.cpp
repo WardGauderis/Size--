@@ -2,9 +2,8 @@
 // Created by ward on 11/23/19.
 //
 
-#include <iostream>
 #include "controller.h"
-#include "pal.h"
+#include "compare/compare.hpp"
 
 using namespace boost::program_options;
 
@@ -12,7 +11,8 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 	desc.add_options()
 			("help,h", "produce this message")
 			("verbose,v", "be verbose")
-			("visualize,V", "visualize the compression algorithm in dot (only applicable to the compression of small files)")
+			("visualize,V",
+			 "visualize the compression algorithm in dot (only applicable to the compression of small files)")
 			("output,o", value<std::filesystem::path>(), "output file/directory (optional)")
 			("create,c", value<Algorithm>(), "create a new archive with the specified algorithm (index or name):\n"
 			                                 "0 none\n"
@@ -22,9 +22,10 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 			                                 "4 OLCA\n"
 			                                 "5 repair *\n"
 			                                 "6 sequitur\n"
-			                                 "8 LZW\n"
-			                                 "7 sequential")
-			("compare,C", "create a comparison table of all algorithms and their performance for the compression of the file(s)")
+			                                 "7 LZW\n"
+			                                 "8 sequential")
+			("compare,C",
+			 "create a comparison table of all algorithms and their performance for the compression of the file(s)")
 			("mode,m", value<Mode>()->default_value(Mode::none_specified),
 			 "run the algorithm in a certain mode (index or name; optional; only applies to algorithms with a *):\n"
 			 "0 none\n"
@@ -65,7 +66,8 @@ Controller::Controller(int argc, char** argv) : desc(options_description("option
 }
 
 void Controller::checkOptions() {
-	if (!(vm.count("create") ^ vm.count("extract"))) throw error("need to specify creation or extraction");
+	if (!(vm.count("create") ^ vm.count("extract") ^ vm.count("compare")))
+		throw error("need to specify creation or extraction");
 	if (!vm.count("files")) throw error("need at least one file to run on");
 	if (files.size() > 1) {
 		tar = true;
@@ -78,7 +80,7 @@ void Controller::checkOptions() {
 }
 
 void Controller::execute() {
-	if (vm.count("create")) {
+	if (vm.count("create") || vm.count("compare")) {
 		compress();
 	} else if (vm.count("extract")) {
 		extract();
@@ -125,8 +127,10 @@ void Controller::compress() {
 		returnValue += system(command.c_str());
 		in = temp.string();
 	}
-
-	pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar, vm.count("verbose"), vm.count("visualize"));
+	if (vm.count("compare")) compare::compareAlgorithms(in, outputFile);
+	else
+		pal::encode(in, outputDirectory / outputFile, vm["create"].as<Algorithm>(), vm["mode"].as<Mode>(), tar,
+		            vm.count("verbose"), vm.count("visualize"));
 }
 
 void Controller::extract() {

@@ -15,7 +15,6 @@
 
 #include "util/settings.h"
 #include "util/production.h"
-#include "util/variable.h"
 #include "algorithms/type.h"
 
 

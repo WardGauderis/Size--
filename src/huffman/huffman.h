@@ -11,14 +11,10 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include <algorithm>
-#include <iostream>
 #include <fstream>
-#include <bitset>
 #include <functional>
 
-#include "../util/variable.h"
 #include "../util/production.h"
 #include "../pal/metadata.h"
 #include "node.h"

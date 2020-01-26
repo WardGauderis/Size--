@@ -6,8 +6,6 @@
 #define SIZE_OLCA_H
 
 #include <deque>
-#include <filesystem>
-#include "../util/variable.h"
 #include "../util/production.h"
 #include "../util/robin_hood.h"
 #include "../util/settings.h"

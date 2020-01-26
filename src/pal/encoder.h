@@ -10,11 +10,8 @@
 
 #pragma once
 
-#include <vector>
 #include "../bitio/bitwriter.h"
 #include "../huffman/encoder.h"
-#include "metadata.h"
-#include <filesystem>
 
 namespace pal
 {

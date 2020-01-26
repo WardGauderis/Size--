@@ -5,7 +5,6 @@
 #ifndef SIZE_LCA_H
 #define SIZE_LCA_H
 
-#include "../util/variable.h"
 #include "../util/production.h"
 #include "../util/robin_hood.h"
 #include "../util/settings.h"

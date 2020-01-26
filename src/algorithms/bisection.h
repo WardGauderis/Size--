@@ -11,10 +11,8 @@
 #pragma once
 
 #include <vector>
-#include <algorithm>
 #include <tuple>
 
-#include "../util/variable.h"
 #include "../util/production.h"
 #include "../util/settings.h"
 #include "../util/robin_hood.h"

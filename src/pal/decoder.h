@@ -14,11 +14,8 @@
 #include "../bitio/bitreader.h"
 #include "../bitio/bitwriter.h"
 
-#include "../util/variable.h"
-#include "../util/settings.h"
 #include "../huffman/decoder.h"
 
-#include "metadata.h"
 
 namespace pal
 {

@@ -10,14 +10,12 @@
 #pragma once
 
 #include <string>
-#include <memory>
 #include <functional>
 #include <fstream>
 #include <filesystem>
 
 #include "../huffman/node.h"
 #include "../util/production.h"
-#include "../util/variable.h"
 #include "../pal/metadata.h"
 
 namespace visualize

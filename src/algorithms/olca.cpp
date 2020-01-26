@@ -2,7 +2,6 @@
 // Created by ward on 12/28/19.
 //
 
-#include <cmath>
 #include "olca.h"
 
 algorithm::olca::OLCA::OLCA(OnlineReader& reader): settings(Settings::Flags::lca_encoding) {
