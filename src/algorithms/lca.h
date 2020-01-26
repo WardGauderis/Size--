@@ -69,7 +69,7 @@ namespace algorithm::lca {
 		productions.reserve(variables.size() / 256);
 		revDict.reserve(variables.size() / 256);
 		counters.reserve(variables.size() / 256);
-		std::cout << variables.size() << std::endl;
+//		std::cout << variables.size() << std::endl;
 
 		bool changed = true;
 
@@ -155,8 +155,8 @@ namespace algorithm::lca {
 			variables.resize(newPos);
 		}
 
-		std::cout << variables.size() << std::endl;
-		std::cout << productions.size() << std::endl;
+//		std::cout << variables.size() << std::endl;
+//		std::cout << productions.size() << std::endl;
 
 		return std::make_tuple(settings, std::move(variables), std::move(productions));
 	}
