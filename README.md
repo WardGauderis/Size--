@@ -16,4 +16,4 @@
  - "Space-Efficient Re-Pair Compression" - Philip Bille, Inge Li Gørtz, and Nicola Prezza - Technical University of Denmark -  http://www2.imm.dtu.dk/~phbi/files/publications/2017serpcC.pdf  
 
 #### Data:
-- Human genome:http://www.benchmarkdataset.com/phppages/download.php?encp=Li4vLi4vQkVOQ0hNQVJLX0RBVEFTRVQvQW5pbWFscy9tYW1tYWxzL0h1bWFufGh1bWFuX3loLmZh
+- Human genome: http://www.benchmarkdataset.com/phppages/download.php?encp=Li4vLi4vQkVOQ0hNQVJLX0RBVEFTRVQvQW5pbWFscy9tYW1tYWxzL0h1bWFufGh1bWFuX3loLmZh
